@@ -12,6 +12,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductRepository productRepository;
+    private final StockTransactionRepository stockTransactionRepository;
 
     public Mono<ServerResponse> createProduct(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(Product.class)
@@ -50,7 +51,8 @@ public class ProductController {
                                 return ServerResponse.badRequest().bodyValue(Map.of("error", "Threshold cannot be smaller than 0"));
                             }
                             return productRepository.save(updatedProduct).flatMap(product2 -> ServerResponse.ok().bodyValue(product2));
-                        })).switchIfEmpty(ServerResponse.notFound().build());
+                        }).switchIfEmpty(ServerResponse.badRequest().bodyValue(Map.of("error", "Request body is missing or Invalid body"))))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 
     public Mono<ServerResponse> deleteProductById(ServerRequest serverRequest) {
@@ -59,5 +61,65 @@ public class ProductController {
                 .flatMap(product -> productRepository.deleteById(product.getId())
                         .then(ServerResponse.ok().bodyValue(Map.of("success", "Deleted successfully"))))
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> increaseStock(ServerRequest serverRequest) {
+        Long id = Long.parseLong(serverRequest.pathVariable("id"));
+        int quantity = Integer.parseInt(serverRequest.queryParam("quantity").orElse("0"));
+
+        if (quantity <= 0) {
+            return ServerResponse.badRequest()
+                    .bodyValue(Map.of("error", "Quantity must be greater than 0"));
+        }
+
+        return productRepository.findById(id)
+                .flatMap(product -> {
+                    product.setStockQuantity(product.getStockQuantity() + quantity);
+                    StockTransaction tx = new StockTransaction();
+                    tx.setProductId(product.getId());
+                    tx.setChangeQuantity(quantity);
+                    tx.setTransactionType("INCREASE");
+
+                    return stockTransactionRepository.save(tx)
+                            .then(productRepository.save(product))
+                            .flatMap(saved -> ServerResponse.ok().bodyValue(saved));
+                })
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> decreaseStock(ServerRequest serverRequest) {
+        Long id = Long.parseLong(serverRequest.pathVariable("id"));
+        int quantity = Integer.parseInt(serverRequest.queryParam("quantity").orElse("0"));
+
+        if (quantity <= 0) {
+            return ServerResponse.badRequest()
+                    .bodyValue(Map.of("error", "Quantity must be greater than 0"));
+        }
+
+        return productRepository.findById(id)
+                .flatMap(product -> {
+                    if (product.getStockQuantity() < quantity) {
+                        return ServerResponse.badRequest()
+                                .bodyValue(Map.of("error", "Insufficient stock available"));
+                    }
+
+                    product.setStockQuantity(product.getStockQuantity() - quantity);
+                    StockTransaction tx = new StockTransaction();
+                    tx.setProductId(product.getId());
+                    tx.setChangeQuantity(quantity);
+                    tx.setTransactionType("DECREASE");
+
+                    return stockTransactionRepository.save(tx)
+                            .then(productRepository.save(product))
+                            .flatMap(saved -> ServerResponse.ok().bodyValue(saved));
+                })
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> getLowStockProducts(ServerRequest serverRequest) {
+        return productRepository.findAll()
+                .filter(product -> product.getStockQuantity() < product.getLowStockThreshold())
+                .collectList()
+                .flatMap(products -> ServerResponse.ok().bodyValue(products));
     }
 }

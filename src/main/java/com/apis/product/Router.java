@@ -31,7 +31,33 @@ public class Router {
         return RouterFunctions.route(PUT("/product/{id}"), productController::updateTheProduct);
     }
 
+    @Bean
     public RouterFunction<ServerResponse> deleteTheProduct(ProductController productController) {
-        return RouterFunctions.route(DELETE("/product/{id}"),productController::deleteProductById);
+        return RouterFunctions.route(DELETE("/product/{id}"), productController::deleteProductById);
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> increaseStockRoute(ProductController productController) {
+        return RouterFunctions.route(
+                POST("/products/{id}/increase-stock"),
+                productController::increaseStock
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> decreaseStockRoute(ProductController productController) {
+        return RouterFunctions.route(
+                POST("/products/{id}/decrease-stock"),
+                productController::decreaseStock
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> lowStockRoute(ProductController productController) {
+        return RouterFunctions.route(
+                GET("/products/low-stock"),
+                productController::getLowStockProducts
+        );
+    }
+
 }
