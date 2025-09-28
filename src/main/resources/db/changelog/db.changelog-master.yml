@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01_Init_Db
+      author: jawad
+      dbms: postgresql
+      runInTransaction: false
+      changes:
+        - sqlFile:
+            relativeToChangelogFile: true
+            path: 01_INIT_DB/create.sql
