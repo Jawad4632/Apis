@@ -1,0 +1,127 @@
+{
+  "info": {
+    "_postman_id": "289caea1-51b0-4517-86b0-a1ef4f2d8b02",
+    "name": "Assesment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "36206700"
+  },
+  "item": [
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Bluetooth Speaker\",\r\n  \"description\": \"Portable speaker with deep bass and 12-hour battery life\",\r\n  \"stockQuantity\": 1\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8080/product"
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8080/product"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Product By Id",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "http://localhost:8080/product/2"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Product",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Bluetooth Speaker\",\r\n  \"description\": \"Portable speaker with deep bass and 12-hour battery life\",\r\n  \"stockQuantity\": 12,\r\n  \"lowStockThreshold\": 10\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8080/product/3"
+      },
+      "response": []
+    },
+    {
+      "name": "get low stock product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8080/products/low-stock"
+      },
+      "response": []
+    },
+    {
+      "name": "Increase the stock",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/products/1/increase-stock?quantity=5",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "products",
+            "1",
+            "increase-stock"
+          ],
+          "query": [
+            {
+              "key": "quantity",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Decrease the stock",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/products/1/decrease-stock?quantity=4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "products",
+            "1",
+            "decrease-stock"
+          ],
+          "query": [
+            {
+              "key": "quantity",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
