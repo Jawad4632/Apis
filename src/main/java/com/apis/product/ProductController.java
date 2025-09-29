@@ -50,7 +50,15 @@ public class ProductController {
                             if (product.getLowStockThreshold() < 0) {
                                 return ServerResponse.badRequest().bodyValue(Map.of("error", "Threshold cannot be smaller than 0"));
                             }
-                            return productRepository.save(updatedProduct).flatMap(product2 -> ServerResponse.ok().bodyValue(product2));
+                            Product productToSave = Product.builder()
+                                    .id(id)
+                                    .name(updatedProduct.getName())
+                                    .description(updatedProduct.getDescription())
+                                    .stockQuantity(updatedProduct.getStockQuantity())
+                                    .lowStockThreshold(updatedProduct.getLowStockThreshold())
+                                    .build();
+
+                            return productRepository.save(productToSave).flatMap(product2 -> ServerResponse.ok().bodyValue(product2));
                         }).switchIfEmpty(ServerResponse.badRequest().bodyValue(Map.of("error", "Request body is missing or Invalid body"))))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
