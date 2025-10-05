@@ -107,5 +107,17 @@ OR build and run the JAR manually:
 # Run the generated JAR (usually inside build/libs/)
 java -jar build/libs/Apis-0.0.1-SNAPSHOT.jar
 ```
+
+### 4 Run the Test case Spring Boot Application (Gradle)
+```bash
+# Run with Gradle Wrapper (Unix/macOS)
+./gradlew test
+
+# OR on Windows
+gradlew test
+
+```
+
+
 ## Video Link
 https://drive.google.com/file/d/1z6KqsFxA7DXfebMGDUQrcg9NsMW8Wkxi/view?usp=sharing
