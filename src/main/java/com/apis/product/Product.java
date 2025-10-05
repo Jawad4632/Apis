@@ -10,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @Table("products")
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
