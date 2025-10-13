@@ -4,24 +4,24 @@ on:
   workflow_dispatch:
 
 jobs:
-   build-artifact:
-      runs-on: ubuntu-latest
+  build-artifact:
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: checkout The Code
-          uses : actions/checkout@v5
-      
-        - name: Set up JDK 17
-          uses: actions/setup-java@v5      
-          with:
-            distribution: 'temurin'
-            java-version: '17'
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v5
 
-        - name: Build  with Gradle
-          run : ./gradlew bootJar
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-        - name: Upload JAR as artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: PATH
-            path : build/libs/*.jar
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: springboot-jar
+          path: build/libs/*.jar
